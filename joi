@@ -1,0 +1,44 @@
+import * as joi from 'joi'
+
+export default Object.freeze({
+    addContact: joi.object().keys({
+        body: joi.object().keys({
+            accountId: joi.string().allow('').required().trim(),
+            name: joi.object().keys({
+                salutation: joi.string().allow('').valid('Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.').required().trim(),
+                firstName: joi.string().required().trim(),
+                middleName: joi.string().allow('').required().trim(),
+                lastName: joi.string().required().trim()
+            }).required(),
+            title: joi.string().allow('').required().trim(),
+            email: joi.string().email().allow('').required().trim(),
+            phone: joi.string().allow('').required().trim(),
+            additionalInformation: joi.object().keys({
+                mobile: joi.string().allow('').required().trim(),
+                department: joi.string().allow('').required().trim(),
+                reportsTo: joi.string().allow('').required().trim()
+            }).required(),
+            addressInformation: joi.object().keys({
+                mailingAddress: joi.object().keys({
+                    street: joi.string().allow('').required().trim(),
+                    city: joi.string().allow('').required().trim(),
+                    state: joi.string().allow('').required().trim(),
+                    postalCode: joi.string().allow('').required().trim(),
+                    country: joi.string().allow('').required().trim()
+                }).required()
+            }).required()
+        }).unknown(false).required()
+    }),
+    getContacts: joi.object().keys({
+        query: joi.object().keys({
+            limit: joi.number().greater(0).optional(),
+            page: joi.number().greater(0).optional(),
+            name: joi.string().trim().optional()
+        })
+    }),
+    getContact: joi.object().keys({
+        params: joi.object().keys({
+            id: joi.string().hex().length(24).required().trim()
+        }).required()
+    })
+})

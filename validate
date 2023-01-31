@@ -1,0 +1,21 @@
+import * as express from 'express';
+import * as Joi from 'joi';
+
+export default (schema: Joi.Schema) => {
+    return (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        let payload = ['body', 'query', 'params'].reduce((acc, value) => {
+            if (Object.keys(request[value]).length) {
+                acc[value] = { ...request[value] }
+            }
+            return acc
+        }, {})
+
+        const { error } = schema.validate(payload)
+
+        if (error) {
+            return response.status(400).send({ message: 'Invalid Parameters', error: error.details })
+        }
+
+        return next()
+    }
+}
